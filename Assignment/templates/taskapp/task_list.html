@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Task List{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Task List</h1>
+    <a href="{% url 'task_create' %}" class="btn btn-primary">Create New Task</a>
+</div>
+
+<form method="get" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="q" class="form-control" placeholder="Search tasks..." value="{{ query }}">
+        <button class="btn btn-outline-secondary" type="submit">Search</button>
+    </div>
+</form>
+
+<div class="row">
+    {% for task in tasks %}
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ task.title }}</h5>
+                <p class="card-text">{{ task.description|truncatechars:100 }}</p>
+                <p class="card-text"><small class="text-muted">Due: {{ task.due_date }}</small></p>
+                <p class="card-text"><small class="text-muted">Status: <span class="badge bg-{% if task.status == 'Completed' %}success{% elif task.status == 'In Progress' %}warning{% else %}secondary{% endif %}">{{ task.status }}</span></small></p>
+                {% if task.remarks %}
+                <p class="card-text"><small class="text-muted">Remarks: {{ task.remarks }}</small></p>
+                {% endif %}
+                <div class="btn-group">
+                    <a href="{% url 'task_update' task.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <a href="{% url 'task_delete' task.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <p class="text-center">No tasks found.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
